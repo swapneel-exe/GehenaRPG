@@ -34,6 +34,35 @@ protected:
 	/** Resets HMD orientation in VR. */
 	void OnResetVR();
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Movement")
+		bool isSprinting;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Health")
+		float playerHealth;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Ability")
+		float abilityDamage;
+
+	
+	
+	UFUNCTION(BlueprintCallable, Category = "Movement")
+		void StartSprint();
+
+	UFUNCTION(BlueprintCallable)
+		void StopSprint();
+
+	UFUNCTION(BlueprintCallable)
+		void StartAbilityHeal(float _AbilityValue);
+
+	void StartHeal();
+
+	UFUNCTION(BlueprintCallable)
+		void StartAbilityDamage(float _AbilityValue);
+
+	void StartDamage();
+
+	void EquipItem();
+
 	/** Called for forwards/backward input */
 	void MoveForward(float Value);
 
@@ -68,5 +97,8 @@ public:
 	FORCEINLINE class USpringArmComponent* GetCameraBoom() const { return CameraBoom; }
 	/** Returns FollowCamera subobject **/
 	FORCEINLINE class UCameraComponent* GetFollowCamera() const { return FollowCamera; }
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Items")
+		bool isOverlappingItems;
 };
 

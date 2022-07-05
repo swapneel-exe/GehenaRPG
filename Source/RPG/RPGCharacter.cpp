@@ -45,6 +45,12 @@ ARPGCharacter::ARPGCharacter()
 
 	// Note: The skeletal mesh and anim blueprint references on the Mesh component (inherited from Character) 
 	// are set in the derived blueprint asset named MyCharacter (to avoid direct content references in C++)
+
+	//Values
+	playerHealth = 1.0f;
+
+	//Bools
+	isOverlappingItems = false;
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -56,6 +62,14 @@ void ARPGCharacter::SetupPlayerInputComponent(class UInputComponent* PlayerInput
 	check(PlayerInputComponent);
 	PlayerInputComponent->BindAction("Jump", IE_Pressed, this, &ACharacter::Jump);
 	PlayerInputComponent->BindAction("Jump", IE_Released, this, &ACharacter::StopJumping);
+
+	PlayerInputComponent->BindAction("Sprint", IE_Pressed, this, &ARPGCharacter::StartSprint);
+	PlayerInputComponent->BindAction("Sprint", IE_Released, this, &ARPGCharacter::StopSprint);
+
+	PlayerInputComponent->BindAction("Ability_Heal", IE_Pressed, this, &ARPGCharacter::StartHeal);
+	PlayerInputComponent->BindAction("Ability_Damage", IE_Pressed, this, &ARPGCharacter::StartDamage);
+
+	PlayerInputComponent->BindAction("Equip", IE_Pressed, this, &ARPGCharacter::EquipItem);
 
 	PlayerInputComponent->BindAxis("MoveForward", this, &ARPGCharacter::MoveForward);
 	PlayerInputComponent->BindAxis("MoveRight", this, &ARPGCharacter::MoveRight);
@@ -87,6 +101,47 @@ void ARPGCharacter::OnResetVR()
 	//		Comment or delete the call to ResetOrientationAndPosition below (appropriate if not supporting VR)
 	UHeadMountedDisplayFunctionLibrary::ResetOrientationAndPosition();
 }
+
+void ARPGCharacter::StartSprint(){
+	isSprinting = true;
+	GetCharacterMovement()->MaxWalkSpeed = 1200.0f;
+}
+
+void ARPGCharacter::StopSprint(){
+	isSprinting = false;
+	GetCharacterMovement()->MaxWalkSpeed = 600.0f;
+}
+
+void ARPGCharacter::StartAbilityHeal(float _AbilityValue){
+	playerHealth += _AbilityValue;
+
+	if (playerHealth > 100.0f) {
+		playerHealth = 100.0f;
+	}
+}
+
+void ARPGCharacter::StartHeal(){
+	StartAbilityHeal(0.1f);
+}
+
+void ARPGCharacter::StartAbilityDamage(float _AbilityValue){
+	playerHealth -= _AbilityValue;
+
+	if (playerHealth < 0.0f) {
+		playerHealth = 0.0f;
+	}
+}
+
+void ARPGCharacter::StartDamage(){
+	StartAbilityDamage(0.2f);
+}
+
+void ARPGCharacter::EquipItem(){
+	if (isOverlappingItems) {
+		UE_LOG(LogTemp,Warning, TEXT("We have Equipped the Item"));
+	}
+}
+
 
 void ARPGCharacter::TouchStarted(ETouchIndex::Type FingerIndex, FVector Location)
 {

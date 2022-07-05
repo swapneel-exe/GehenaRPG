@@ -1,3 +1,3 @@
-# RPG
+# Gehena RPG
 
-Developed with Unreal Engine 4
+Gehena RPG is a Third-Person Perspective Game being developed using Unreal Engine 4.
