@@ -34,16 +34,21 @@ protected:
 	/** Resets HMD orientation in VR. */
 	void OnResetVR();
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Movement")
-		bool isSprinting;
+	bool isSprinting;
+
+	bool hasArmor;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Health")
 		float playerHealth;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Ability")
-		float abilityDamage;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Health")
+		float playerArmor;
 
-	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Items")
+		bool isOverlappingItems;
+
+	UFUNCTION(BlueprintImplementableEvent, Category = "Items")
+		AActor* DetermineOverlappingItems();
 	
 	UFUNCTION(BlueprintCallable, Category = "Movement")
 		void StartSprint();
@@ -54,10 +59,16 @@ protected:
 	UFUNCTION(BlueprintCallable)
 		void StartAbilityHeal(float _AbilityValue);
 
+	//UFUNCTION(BlueprintCallable)
+		//void ArmorDamage(float _AbilityValue);
+
+	UFUNCTION(BlueprintCallable)
+		void ArmorReplenish(float _AbilityValue);
+
 	void StartHeal();
 
 	UFUNCTION(BlueprintCallable)
-		void StartAbilityDamage(float _AbilityValue);
+		void TakeDamage(float _AbilityValue);
 
 	void StartDamage();
 
@@ -98,7 +109,6 @@ public:
 	/** Returns FollowCamera subobject **/
 	FORCEINLINE class UCameraComponent* GetFollowCamera() const { return FollowCamera; }
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Items")
-		bool isOverlappingItems;
+	
 };
 

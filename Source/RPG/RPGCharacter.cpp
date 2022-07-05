@@ -48,9 +48,11 @@ ARPGCharacter::ARPGCharacter()
 
 	//Values
 	playerHealth = 1.0f;
+	playerArmor = 1.0f;
 
 	//Bools
 	isOverlappingItems = false;
+	hasArmor = true;
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -66,8 +68,8 @@ void ARPGCharacter::SetupPlayerInputComponent(class UInputComponent* PlayerInput
 	PlayerInputComponent->BindAction("Sprint", IE_Pressed, this, &ARPGCharacter::StartSprint);
 	PlayerInputComponent->BindAction("Sprint", IE_Released, this, &ARPGCharacter::StopSprint);
 
-	PlayerInputComponent->BindAction("Ability_Heal", IE_Pressed, this, &ARPGCharacter::StartHeal);
-	PlayerInputComponent->BindAction("Ability_Damage", IE_Pressed, this, &ARPGCharacter::StartDamage);
+	//PlayerInputComponent->BindAction("Ability_Heal", IE_Pressed, this, &ARPGCharacter::StartHeal);
+	//PlayerInputComponent->BindAction("Ability_Damage", IE_Pressed, this, &ARPGCharacter::StartDamage);
 
 	PlayerInputComponent->BindAction("Equip", IE_Pressed, this, &ARPGCharacter::EquipItem);
 
@@ -120,20 +122,39 @@ void ARPGCharacter::StartAbilityHeal(float _AbilityValue){
 	}
 }
 
+void ARPGCharacter::ArmorReplenish(float _AbilityValue){
+	playerArmor += _AbilityValue;
+	hasArmor = true;
+
+	if (playerArmor > 100.0f) {
+		playerArmor = 100.0f;
+	}
+}
+
 void ARPGCharacter::StartHeal(){
 	StartAbilityHeal(0.1f);
 }
+ 
+void ARPGCharacter::TakeDamage(float _AbilityValue){
+	if (hasArmor) {
+		playerArmor -= _AbilityValue;
+		if (playerArmor < 0.0f) {
+			hasArmor = false;
+			playerHealth += playerArmor;
+			playerArmor = 0.0f;
+		}
+	}
+	else {
+		playerHealth -= _AbilityValue;
 
-void ARPGCharacter::StartAbilityDamage(float _AbilityValue){
-	playerHealth -= _AbilityValue;
-
-	if (playerHealth < 0.0f) {
-		playerHealth = 0.0f;
+		if (playerHealth < 0.0f) {
+			playerHealth = 0.0f;
+		}
 	}
 }
 
 void ARPGCharacter::StartDamage(){
-	StartAbilityDamage(0.2f);
+	TakeDamage(0.2f);
 }
 
 void ARPGCharacter::EquipItem(){
